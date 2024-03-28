@@ -196,46 +196,175 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                                   const SizedBox(height: 10),
 
                                   ListView.builder(
-  shrinkWrap: true,
-  itemCount: logic.gameDetailsList.length,
-  itemBuilder: (_, index) {
-    final game = logic.gameDetailsList[index];
-    final gameName = game.gameName;
-    final gameStartTime = DateTime.parse(game.gameStartTime);
-    final betClosingTime = DateTime.parse(game.betClosingTime);
-    final gameEndTime = DateTime.parse(game.gameEndTime);
-    final currentTime = DateTime.now();
+                                    shrinkWrap: true,
+                                    itemCount: logic.gameDetailsList.length,
+                                    itemBuilder: (_, index) {
+                                      final game = logic.gameDetailsList[index];
+                                      final gameName = game.gameName;
+                                      final winningPrice = game.winningPrice;
+                                      final currentTime = DateTime.now();
+                                      final timeParts =
+                                          game.gameStartTime.split(':');
+                                      final hour = int.parse(timeParts[0]);
+                                      final minute = int.parse(timeParts[1]);
+                                      final second = int.parse(timeParts[2]);
+                                      final gameStartTime = DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day,
+                                          hour,
+                                          minute,
+                                          second);
 
-    if (currentTime.isAfter(gameStartTime) &&
-        currentTime.isBefore(betClosingTime)) {
-      // Betting is still open
-      return BetCardWidget(
-        gameName: gameName,
-        status: 'Betting Open',
-        // Other necessary parameters for open betting card
-      );
-    } else if (currentTime.isAfter(betClosingTime) &&
-        currentTime.isBefore(gameEndTime)) {
-      // Betting is closed
-      return BetCardWidget(
-        gameName: gameName,
-        status: 'Betting Closed',
-        // Other necessary parameters for closed betting card
-      );
-    } else if (currentTime.isAfter(gameEndTime)) {
-      // Game has ended
-      return BetCardWidget(
-        gameName: gameName,
-        status: 'Game Ended',
-        // Other necessary parameters for game ended card
-      );
-    } else {
-      // No match found
-      return Container(); // Or any placeholder widget
-    }
-  },
-),
+                                      final timepartsBetclosingtime =
+                                          game.betClosingTime.split(':');
+                                      final hourBetclosingtime =
+                                          int.parse(timepartsBetclosingtime[0]);
+                                      final minuteBetclosingtime =
+                                          int.parse(timepartsBetclosingtime[1]);
+                                      final secondBetclosingtime =
+                                          int.parse(timepartsBetclosingtime[2]);
+                                      final betClosingTime = DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day,
+                                          hourBetclosingtime,
+                                          minuteBetclosingtime,
+                                          secondBetclosingtime);
 
+                                      final gameendtimeTimeparts =
+                                          game.gameEndTime.split(':');
+                                      final gameendtimeHour =
+                                          int.parse(gameendtimeTimeparts[0]);
+                                      final gameendtimeMinute =
+                                          int.parse(gameendtimeTimeparts[1]);
+                                      final gameendtimeSecond =
+                                          int.parse(gameendtimeTimeparts[2]);
+                                      final gameEndTime = DateTime(
+                                          DateTime.now().year,
+                                          DateTime.now().month,
+                                          DateTime.now().day,
+                                          gameendtimeHour,
+                                          gameendtimeMinute,
+                                          gameendtimeSecond);
+
+                                      final startTime = DateFormat("HH:mm:ss")
+                                          .parse(game.gameStartTime);
+                                      final betCloseTime =
+                                          DateFormat("HH:mm:ss")
+                                              .parse(game.betClosingTime);
+                                      final betendTime = DateFormat("HH:mm:ss")
+                                          .parse(game.gameEndTime);
+
+                                      if (currentTime.isAfter(gameStartTime) &&
+                                          currentTime
+                                              .isBefore(betClosingTime)) {
+                                        List<WinningNumbers>
+                                            winningNumbersList = controller
+                                                .winningNumbersList
+                                                .map((numberString) {
+                                          // Convert each string to a WinningNumbers object
+                                          return WinningNumbers(
+                                            date: DateTime
+                                                .now(), // Set the date as needed
+                                            winningNumbers: [
+                                              numberString
+                                            ], // Assuming each string represents one winning number
+                                          );
+                                        }).toList();
+
+                                        final winningNumbersForCurrentDate =
+                                            getWinningNumbersForCurrentDate(
+                                                winningNumbersList);
+
+                                        var now = DateTime.now();
+                                        var formatter = DateFormat('dd/MM/yy');
+                                        DateTime formattedDate =
+                                            formatter.format(now) as DateTime;
+                                        // Betting is still open
+                                        return ActiveBetCardWidget(
+                                          gameName: gameName,
+                                          status: 'Betting Open',
+                                          gameStartTime: gameStartTime,
+                                          gameEndTime: gameEndTime,
+                                          winningNumbers:
+                                              winningNumbersForCurrentDate,
+                                          currentDate: formattedDate,
+                                          winningPrice: winningPrice,
+                                          // Other necessary parameters for open betting card
+                                        );
+                                      } else if (currentTime
+                                              .isAfter(betClosingTime) &&
+                                          currentTime.isBefore(gameEndTime)) {
+                                        List<WinningNumbers>
+                                            winningNumbersList = controller
+                                                .winningNumbersList
+                                                .map((numberString) {
+                                          // Convert each string to a WinningNumbers object
+                                          return WinningNumbers(
+                                            date: DateTime
+                                                .now(), // Set the date as needed
+                                            winningNumbers: [
+                                              numberString
+                                            ], // Assuming each string represents one winning number
+                                          );
+                                        }).toList();
+
+                                        final winningNumbersForCurrentDate =
+                                            getWinningNumbersForCurrentDate(
+                                                winningNumbersList);
+
+                                        var now = DateTime.now();
+                                        var formatter = DateFormat('dd/MM/yy');
+                                        DateTime formattedDate =
+                                            formatter.format(now) as DateTime;
+                                        // Betting is closed
+                                        return ClosedBetCardWidget(
+                                          gameName: gameName,
+                                          status: 'Betting Closed',
+                                          gameStartTime: gameStartTime,
+                                          gameEndTime: gameEndTime,
+                                          winningNumbers:
+                                              winningNumbersForCurrentDate,
+                                          currentDate: formattedDate,
+                                          // Other necessary parameters for closed betting card
+                                        );
+                                      } else if (currentTime
+                                          .isAfter(gameEndTime)) {
+                                        List<WinningNumbers>
+                                            winningNumbersList = controller
+                                                .winningNumbersList
+                                                .map((numberString) {
+                                          // Convert each string to a WinningNumbers object
+                                          return WinningNumbers(
+                                            date: DateTime
+                                                .now(), // Set the date as needed
+                                            winningNumbers: [
+                                              numberString
+                                            ], // Assuming each string represents one winning number
+                                          );
+                                        }).toList();
+
+                                        final winningNumbersForCurrentDate =
+                                            getWinningNumbersForCurrentDate(
+                                                winningNumbersList);
+
+                                        // Game has ended
+                                        return ExpiredBetCardWidget(
+                                          gameName: gameName,
+                                          status: 'Game Ended',
+                                          gameStartTime: gameStartTime,
+                                          gameEndTime: gameEndTime,
+                                          winningNumbers:
+                                              winningNumbersForCurrentDate,
+                                          // Other necessary parameters for game ended card
+                                        );
+                                      } else {
+                                        // No match found
+                                        return Container(); // Or any placeholder widget
+                                      }
+                                    },
+                                  ),
 
                                   const SizedBox(height: 10),
                                   // const SizedBox(height: 10),
@@ -253,4 +382,29 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
           });
     });
   }
+}
+
+class WinningNumbers {
+  final DateTime date;
+  final List<String> winningNumbers;
+
+  WinningNumbers({
+    required this.date,
+    required this.winningNumbers,
+  });
+}
+
+List<String> getWinningNumbersForCurrentDate(
+    List<WinningNumbers> winningNumbersList) {
+  final currentDate = DateTime.now();
+  final currentDateFormatted = DateFormat("yyyy-MM-dd").format(currentDate);
+
+  final winningNumbersObject = winningNumbersList.firstWhere(
+    (winningNumbers) =>
+        DateFormat("yyyy-MM-dd").format(winningNumbers.date) ==
+        currentDateFormatted,
+    orElse: () => WinningNumbers(date: currentDate, winningNumbers: []),
+  );
+
+  return winningNumbersObject.winningNumbers;
 }

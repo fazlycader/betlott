@@ -1,5 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, unrelated_type_equality_checks
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:getx_skeleton/app/data/models/response/home_screen_model.dart';
@@ -9,6 +11,7 @@ import '../../../../utils/constants.dart';
 import '../../../data/local/my_shared_pref.dart';
 import '../../../data/models/response/profile_model.dart';
 import '../../../services/base_client.dart';
+import 'package:http/http.dart' as http;
 
 class DashboardScreenController extends GetxController {
   //TODO: Implement DashboardScreenController
@@ -16,13 +19,40 @@ class DashboardScreenController extends GetxController {
   HomeScreenModel data = HomeScreenModel();
   ProfileModel profile = ProfileModel();
   RxList<GameDetails> gameDetailsList = <GameDetails>[].obs;
+  RxList<String> winningNumbersList = <String>[].obs;
 
   @override
   void onInit() {
     // getProfile();
     fetchGameDetails();
+    fetchWinningNumbers(); // Call function to fetch winning numbers
     getData();
     super.onInit();
+  }
+
+  void fetchWinningNumbers() async {
+    try {
+      final response =
+          await http.get(Uri.parse('http://betlott.in/api/winning-numbers'));
+      if (response.statusCode == 200) {
+        // Parse the response JSON
+        final List<dynamic> jsonResponse = jsonDecode(response.body);
+
+        // Cast the dynamic list to a list of strings
+        final List<String> winningNumbers = jsonResponse
+            .map((data) => data['winning_numbers'] as String)
+            .toList();
+
+        // Assign the winningNumbers to winningNumbersList
+        winningNumbersList.assignAll(winningNumbers);
+      } else {
+        // Handle HTTP error
+        print('Failed to load winning numbers. Error ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error fetching winning numbers: $e');
+    }
   }
 
   int cateLengthFinder(int id) {

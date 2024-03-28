@@ -17,4 +17,5 @@ class Constants {
   static const updateProfileApiUrl = '$baseUrl/profile-setting';
   static const categoryMatchApiUrl = '$baseUrl/category/';
   static const gameDetailsUrl = '$baseUrl/game-details/';
+  static const winningNumbersUrl = '$baseUrl/winning-numbers';
 }
