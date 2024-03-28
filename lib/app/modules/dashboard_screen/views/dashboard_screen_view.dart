@@ -201,6 +201,7 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                                     itemBuilder: (_, index) {
                                       final game = logic.gameDetailsList[index];
                                       final gameName = game.gameName;
+                                      final isEnabled = game.isEnabled;
                                       final winningPrice = game.winningPrice;
                                       final currentTime = DateTime.now();
                                       final timeParts =
@@ -256,9 +257,12 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                                       final betendTime = DateFormat("HH:mm:ss")
                                           .parse(game.gameEndTime);
 
+                                      // if (isEnabled) {
+                                      print(isEnabled);
                                       if (currentTime.isAfter(gameStartTime) &&
                                           currentTime
                                               .isBefore(betClosingTime)) {
+                                        print(isEnabled);
                                         List<WinningNumbers>
                                             winningNumbersList = controller
                                                 .winningNumbersList
@@ -331,6 +335,7 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                                         );
                                       } else if (currentTime
                                           .isAfter(gameEndTime)) {
+                                        print(isEnabled);
                                         List<WinningNumbers>
                                             winningNumbersList = controller
                                                 .winningNumbersList
@@ -363,6 +368,9 @@ class DashboardScreenView extends GetView<DashboardScreenController> {
                                         // No match found
                                         return Container(); // Or any placeholder widget
                                       }
+                                      // } else {
+                                      //   return const Text('Games are disabled');
+                                      // }
                                     },
                                   ),
 

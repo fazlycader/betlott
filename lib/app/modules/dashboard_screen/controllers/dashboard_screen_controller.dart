@@ -179,6 +179,7 @@ class GameDetails {
   final String gameStartTime;
   final String betClosingTime;
   final String gameEndTime;
+  final bool isEnabled;
 
   GameDetails({
     required this.id,
@@ -188,6 +189,7 @@ class GameDetails {
     required this.gameStartTime,
     required this.betClosingTime,
     required this.gameEndTime,
+    required this.isEnabled,
   });
 
   factory GameDetails.fromJson(Map<String, dynamic> json) {
@@ -199,6 +201,7 @@ class GameDetails {
       gameStartTime: json['Game_Start_Time'],
       betClosingTime: json['Bet_Closing_Time'],
       gameEndTime: json['Game_End_Time'],
+      isEnabled: json['isEnabled'] ?? false,
     );
   }
 }
